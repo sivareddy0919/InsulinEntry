@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, Button, Alert } from 'react-native';
+import { View, Text, FlatList, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -36,7 +36,6 @@ const YourComponent = ({ navigation }) => {
         insulinintake: insulinIntake
       });
       if (response.data.status === 'success') {
-        // Update local state with updated insulin intake
         const updatedItem = pendingData.find(item => item.id === id);
         updatedItem.insulinintake = insulinIntake;
         updatedItem.status = 'completed';
@@ -59,49 +58,54 @@ const YourComponent = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (
-    <View style={{ marginBottom: 10 }}>
-      <Text>id: {item.id}</Text>
-      <Text>Username: {item.username}</Text>
-      <Text>Date: {item.datetime}</Text>
-      <Text>Note: {item.note}</Text>
-      <Text>Session: {item.session}</Text>
-      <Text>Sugar Concentration: {item.sugar_concentration}</Text>
-      <Text>Insulin Intake: {item.insulinintake}</Text>
+    <View style={styles.itemContainer}>
+      <Text style={styles.itemText}>Username: {item.username}</Text>
+      <Text style={styles.itemText}>Date: {item.datetime}</Text>
+      <Text style={styles.itemText}>Note: {item.note}</Text>
+      <Text style={styles.itemText}>Session: {item.session}</Text>
+      <Text style={styles.itemText}>Sugar Concentration: {item.sugar_concentration}</Text>
+      <Text style={styles.itemText}>Insulin Intake: {item.insulinintake}</Text>
       {showPending && (
         <>
           <TextInput
-            style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 5, paddingHorizontal: 10 }}
-            placeholder="Update Insulin Intake"
+            style={styles.input}
+            placeholder="Enter InsulinIntake Value"
+            placeholderTextColor="#000000"
             value={insulinIntakes[item.id] || ''}
             onChangeText={text => handleInsulinIntakeChange(item.id, text)}
           />
-          <Button
-            title="Update Insulin Intake"
-            onPress={() => handleUpdateInsulinIntake(item.id)}
-          />
+          <View style={styles.addButtonContainer}>
+            <Button
+              title="Add Insulin Intake"
+              onPress={() => handleUpdateInsulinIntake(item.id)}
+            />
+          </View>
         </>
       )}
     </View>
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#f0f0f0' }}>
-        <Icon name="arrow-back" size={24} color="black" />
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>Your Text Here</Text>
+    <View style={styles.container}>
+      <View style={styles.topContainer}>
+        <Text style={styles.topText}>Insulin Entry</Text>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', padding: 10 }}>
-        <Button
-          title="Pending"
-          onPress={() => setShowPending(true)}
-        />
-        <Button
-          title="Completed"
-          onPress={() => navigation.navigate('completedScreen')}
-        />
+      <View style={styles.buttonContainer}>
+        <View style={styles.pendingButton}>
+          <Button
+            title="Pending"
+            onPress={() => setShowPending(true)}
+          />
+        </View>
+        <View style={styles.completedButton}>
+          <Button
+            title="Completed"
+            onPress={() => navigation.navigate('completedScreen')}
+          />
+        </View>
       </View>
-      <View style={{ padding: 10 }}>
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>
+      <View style={styles.listContainer}>
+        <Text style={styles.listTitle}>
           {showPending ? 'Pending Data' : 'Completed Data'}
         </Text>
         <FlatList
@@ -113,5 +117,73 @@ const YourComponent = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF'
+  },
+  topContainer: {
+    padding: 10,
+    backgroundColor: '#603F83FF',
+    alignItems: 'center',
+    height: '12%',
+  },
+  topText: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginTop: '12%'
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+  pendingButton: {
+    width: '40%',
+    backgroundColor:'#603F83FF',
+  },
+  completedButton: {
+    width: '40%',
+    backgroundColor:'#603F83FF',
+  },
+  listContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  listTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  itemContainer: {
+    marginBottom: 10,
+    backgroundColor: '#603F83FF', 
+    borderRadius: 10,
+    padding: 10,
+  },
+  itemText: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: '#FFFFFF',
+  },
+  input: {
+    height: 40,
+    borderColor: '#FFFFFF',
+    borderWidth: 2,
+    marginBottom: 7,
+    width: '90%',
+    backgroundColor: '#FFFFFF',
+    color: '#000000',
+    paddingHorizontal: 10,
+  },
+  addButtonContainer: {
+    width: '90%',
+    marginLeft: '0%',
+    marginBottom: 10,
+  }
+});
 
 export default YourComponent;
